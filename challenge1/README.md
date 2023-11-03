@@ -59,5 +59,16 @@ cd iac
 
 # Push to container registry
 
+```powershell
+$registryName = "<registry name>"
+
+az login
+az acr login --name "$registryName"
+
+# Tag container image (create alias)
+docker tag challenge1-image "$registryName.azurecr.io/challenge1/challenge1-image"
+
+docker push "$registryName.azurecr.io/challenge1/challenge1-image"
+```
 
 # Run container in AKS
