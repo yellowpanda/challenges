@@ -72,3 +72,8 @@ docker push "$registryName.azurecr.io/challenge1/challenge1-image"
 ```
 
 # Run container in AKS
+
+```powershell
+az aks get-credentials --resource-group "<resource grup name>" --name challenge1
+kubectl apply -f ./deployment.yaml
+```

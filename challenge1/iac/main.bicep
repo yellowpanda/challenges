@@ -2,7 +2,7 @@ param location string = resourceGroup().location
 param tenantId string = subscription().tenantId
 param userObjectId string
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
+resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
   name: 'challenge1${uniqueString(resourceGroup().id)}'
   location: location
   sku: {
@@ -44,8 +44,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
   }
 }
 
-
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
+resource aks 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
   name: 'challenge1'
   location: location
   identity: {
@@ -67,6 +66,16 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
   }
 }
 
+var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
+resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(resourceGroup().id, aks.id, acrPullRoleDefinitionId)
+  scope: acr
+  properties: {
+    principalId: aks.properties.identityProfile.kubeletidentity.objectId
+    roleDefinitionId: acrPullRoleDefinitionId
+    principalType: 'ServicePrincipal'
+  }
+}
 
-output containerRegistryName string = containerRegistry.name
+output containerRegistryName string = acr.name
 

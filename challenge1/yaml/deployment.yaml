@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: challenge1
+spec:
+  selector: 
+    matchLabels: 
+      app: challenge1 
+  template: 
+    metadata:
+      labels:
+        app: challenge1
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - image: challenge1my46yrl5stdio.azurecr.io/challenge1/challenge1-image:latest
+          name: challenge1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 80
+              name: http
