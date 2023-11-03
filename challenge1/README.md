@@ -50,6 +50,8 @@ Open the website in a browser http://localhost:8080 and see `Hello World!`
 
 # Create a container registry (ACR) and Kuberntes Cluster (AKS) in Azure
 
+I use Bicep to describe what resources that I need ([main.bicep](iac/main.bicep)) and have two powershell scripts to create ([iac-deploy.ps1](iac/iac-deploy.ps1)) and delete all the resources ([iac-cleanup.ps1](iac/iac-cleanup.ps1)). 
+
 ```powershell
 az login
 az account set --subscription "<subscription name>"
