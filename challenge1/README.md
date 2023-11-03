@@ -93,8 +93,8 @@ kubectl apply -f ./yaml/
 
 And now you can see `Hello World!` at http://challenge1.aba1a4029e1d4aecb51f.westeurope.aksapp.io/. 
 
-Note: 
-It did not worked at first. I looked in the log files for the DNS plugin: 
+## Debugging Ingress 
+It did not worked at first, because it could not DNS resolve. I looked in the log files for the DNS plugin: 
 
 ```powershell
 kubectl --namespace kube-system logs addon-http-application-routing-external-dns-7869df5566-5ldnk
