@@ -1,7 +1,7 @@
 
 # Challenge
 
-Create a website, put it into a container and host it Kubernetes.
+Create a website, put it into a container and host it Kubernetes (AKS).
 
 # Create website
 
