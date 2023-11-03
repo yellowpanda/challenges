@@ -1,5 +1,5 @@
 
-# Challenge
+# Challenge 1
 
 Create a website, put it into a container and host it Kubernetes (AKS).
 
@@ -48,7 +48,7 @@ docker run -it --rm -p 8080:80 challenge1-image
 Open the website in a browser http://localhost:8080 and see `Hello World!`
 
 
-# Create a container registry and AKS in Azure
+# Create a container registry (ACR) and Kuberntes Cluster (AKS) in Azure
 
 ```powershell
 az login
@@ -88,7 +88,6 @@ And apply the all yaml files:
 ```powershell
 az aks get-credentials --resource-group "$resourceGroupName" --name challenge1
 kubectl apply -f ./yaml/
-
 ```
 
 And now you can see `Hello World!` at http://challenge1.aba1a4029e1d4aecb51f.westeurope.aksapp.io/. 
@@ -100,5 +99,7 @@ It did not worked at first, because it could not DNS resolve. I looked in the lo
 kubectl --namespace kube-system logs addon-http-application-routing-external-dns-7869df5566-5ldnk
 ```
 
-It said `Failed to refresh the Token for request to https://management.azure.com/subscriptions/....`. I just killed the pod, it restarted and the new pod did not log any errors. And then I just needed to wait some time for the DNS to update. 
+It said `Failed to refresh the Token for request to https://management.azure.com/subscriptions/....`. 
+I just killed the pod, it restarted and the new pod did not log any errors. 
+And then I just needed to wait some time for the DNS to update. 
 
