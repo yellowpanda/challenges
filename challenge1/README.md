@@ -48,10 +48,16 @@ docker run -it --rm -p 8080:80 challenge1-image
 Open the website in a browser http://localhost:8080 and see `Hello World!`
 
 
-# Creat a container registry in Azure
+# Create a container registry and AKS in Azure
+
+```powershell
+az login
+az account set --subscription "<subscription name>"
+cd iac
+./iac-deploy.ps1
+```
 
 # Push to container registry
 
-# Create an AKS instance
 
 # Run container in AKS
