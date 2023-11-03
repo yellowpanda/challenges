@@ -73,7 +73,32 @@ docker push "$registryName.azurecr.io/challenge1/challenge1-image"
 
 # Run container in AKS
 
-```powershell
-az aks get-credentials --resource-group "<resource grup name>" --name challenge1
-kubectl apply -f ./deployment.yaml
+Create yaml files:
+* [deployment.yaml](yaml/deployment.yaml)
+* [service.yaml](yaml/service.yaml)
+* [ingress.yaml](yaml/ingress.yaml)
+
+Update hostname in ingress.yaml given the value found in 
+```powershell 
+$resourceGroupName = "<resource group name>"
+az aks show -g "$resourceGroupName" -n challenge1 --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
 ```
+
+And apply the all yaml files:
+```powershell
+az aks get-credentials --resource-group "$resourceGroupName" --name challenge1
+kubectl apply -f ./yaml/
+
+```
+
+And now you can see `Hello World!` at http://challenge1.aba1a4029e1d4aecb51f.westeurope.aksapp.io/. 
+
+Note: 
+It did not worked at first. I looked in the log files for the DNS plugin: 
+
+```powershell
+kubectl --namespace kube-system logs addon-http-application-routing-external-dns-7869df5566-5ldnk
+```
+
+It said `Failed to refresh the Token for request to https://management.azure.com/subscriptions/....`. I just killed the pod, it restarted and the new pod did not log any errors. And then I just needed to wait some time for the DNS to update. 
+

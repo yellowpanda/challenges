@@ -1,6 +1,4 @@
 param location string = resourceGroup().location
-param tenantId string = subscription().tenantId
-param userObjectId string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
   name: 'challenge1${uniqueString(resourceGroup().id)}'
@@ -10,37 +8,6 @@ resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
   }
   properties: {
     adminUserEnabled: true
-  }
-}
-
-resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
-  name: 'challenge1x'
-  location: location
-  properties: {
-    enabledForDeployment: true
-    enabledForTemplateDeployment: true
-    enabledForDiskEncryption: true
-    tenantId: tenantId
-    enableSoftDelete: false
-    accessPolicies: [
-      {
-        tenantId: tenantId
-        objectId: userObjectId
-        permissions: {
-          secrets: [
-            'list'
-            'get'
-            'set'
-            'delete'
-            'purge'
-          ]
-        }
-      }
-    ]
-    sku: {
-      name: 'standard'
-      family: 'A'
-    }
   }
 }
 
@@ -63,9 +30,15 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
         mode: 'System'
       }
     ]
+    addonProfiles: {
+      httpApplicationRouting: {
+        enabled: true
+      }
+    }
   }
 }
 
+// Give AKS the acrPull role in ACR.
 var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
 resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(resourceGroup().id, aks.id, acrPullRoleDefinitionId)
@@ -78,4 +51,3 @@ resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 
 output containerRegistryName string = acr.name
-

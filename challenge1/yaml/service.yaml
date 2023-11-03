@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: challenge1
+spec:
+  type: ClusterIP
+  selector:
+    app: challenge1
+  ports:
+    - port: 80 # SERVICE exposed port
+      name: http # SERVICE port name
+      protocol: TCP # The protocol the SERVICE will listen to
+      targetPort: http # Port to forward to in the POD

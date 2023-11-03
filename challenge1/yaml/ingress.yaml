@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: challenge1
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing # Only for testing
+spec:
+  rules:
+    - host: challenge1.aba1a4029e1d4aecb51f.westeurope.aksapp.io
+      http:
+        paths:
+          - backend: # How the ingress will handle the requests
+              service:
+               name: challenge1 # Which service the request will be forwarded to
+               port:
+                 name: http # Which port in that service
+            path: / # Which path is this rule referring to
+            pathType: Prefix # See more at https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types
