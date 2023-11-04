@@ -18,10 +18,27 @@ I use Docker Compose to start Kafka.
 docker-compose up
 ``` 
 
-
-
+This starts both containers. Kafka is now accessible from `localhost:9092`. 
 
 # Create Publisher Service
+
+The worker template is used to publish an event every second.
+
+```powershell
+dotnet new solution --name challenge1
+dotnet new worker --name producer
+dotnet sln add producer
+```
+
+For the Kafka client I use the Confluent.Kafka nuget package. 
+It is described [here](https://docs.confluent.io/kafka-clients/dotnet/current/overview.html).
+
+```powershell
+cd producer
+dotnet add package Confluent.Kafka
+```
+
+I only added a bit of code to the [worker](src/producer/Worker.cs) class.
 
 # Create Subscriber Service
 
