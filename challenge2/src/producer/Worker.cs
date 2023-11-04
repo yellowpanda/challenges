@@ -1,12 +1,11 @@
 using Confluent.Kafka;
-using System.Configuration;
 
 namespace producer;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private ProducerConfig _producerConfig;
+    private readonly ProducerConfig _producerConfig;
 
     public Worker(ILogger<Worker> logger, IConfiguration configuration)
     {
