@@ -10,11 +10,13 @@ We need Docker Desktop
 
 # Run Kafka locally
 
-I plan to use [Strimzi Kafka](https://strimzi.io/).
+I use [Strimzi Kafka](https://strimzi.io/).
 
-I use Docker Compose to start Kafka.
+It consist of two containers zookeeper and kafka. 
+To start both containers use Docker Compose and a [docker-compose.yaml](src/docker-compose.yaml): 
 
 ```powershell
+cd src
 docker-compose up
 ``` 
 
