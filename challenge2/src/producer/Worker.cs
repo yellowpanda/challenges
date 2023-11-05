@@ -12,6 +12,11 @@ public class Worker : BackgroundService
         _logger = logger;
 
         var kafkaHost = configuration["KafkaHost"];
+        if (string.IsNullOrEmpty(kafkaHost))
+        {
+            throw new InvalidOperationException("Cannot find KafkaHost configuration setting.");
+        }
+
         _producerConfig = new ProducerConfig
         {
             BootstrapServers = kafkaHost,
@@ -23,12 +28,10 @@ public class Worker : BackgroundService
         _logger.LogInformation(@"Produce events to {kafkaHost}", _producerConfig.BootstrapServers);
         while (!stoppingToken.IsCancellationRequested)
         {
+            using var producer = new ProducerBuilder<Null, string>(_producerConfig).Build();
             
-            using (var producer = new ProducerBuilder<Null, string>(_producerConfig).Build())
-            {
-                var result = await producer.ProduceAsync("challenge2-topic", new Message<Null, string> { Value = "Hello!" }, stoppingToken);
-                _logger.LogInformation(@"Worker running at {time} and published event number {resultOffset}.", DateTimeOffset.Now, result.Offset);
-            }
+            var result = await producer.ProduceAsync("challenge2-topic", new Message<Null, string> { Value = "Hello!" }, stoppingToken);
+            _logger.LogInformation(@"Worker running at {time} and published event number {resultOffset}.", DateTimeOffset.Now, result.Offset);
 
             await Task.Delay(1000, stoppingToken);
         }

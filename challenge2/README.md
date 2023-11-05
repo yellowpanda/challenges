@@ -42,7 +42,21 @@ dotnet add package Confluent.Kafka
 
 I only added a bit of code to the [worker](src/producer/Worker.cs) class.
 
-# Create Subscriber Service
+# Create Consumer Service
+
+```powershell
+dotnet new worker --name consumer
+dotnet sln add consumer
+```
+
+I use the sam nuget package as above and use the consumer example described [here](https://docs.confluent.io/kafka-clients/dotnet/current/overview.html).
+
+
+```powershell
+cd consumer
+dotnet add package Confluent.Kafka
+```
+
 
 # Create Containers for services
 
