@@ -49,7 +49,7 @@ dotnet new worker --name consumer
 dotnet sln add consumer
 ```
 
-I use the sam nuget package as above and use the consumer example described [here](https://docs.confluent.io/kafka-clients/dotnet/current/overview.html).
+I use the same nuget package as above and use the consumer example described [here](https://docs.confluent.io/kafka-clients/dotnet/current/overview.html). 
 
 
 ```powershell
@@ -57,6 +57,9 @@ cd consumer
 dotnet add package Confluent.Kafka
 ```
 
+I added the consumer logic to the [worker](src/producer/Worker.cs) class. 
+
+The GroupId property is interesting from a Kafka perspective. When an event is processed, the Kafka server is informed (automatically or with with `.Commit(...)`) that this GroupId has processed the event. When restarting the application the Kakfa server can then inform the client from what offset to continue. If the application is restarted with a different GroupId then all events is reprocessed. 
 
 # Create Containers for services
 
