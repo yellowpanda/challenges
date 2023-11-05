@@ -57,7 +57,7 @@ cd consumer
 dotnet add package Confluent.Kafka
 ```
 
-I added the consumer logic to the [worker](src/producer/Worker.cs) class. 
+I added the consumer logic to the [worker](src/consumer/Worker.cs) class. 
 
 The GroupId property is interesting from a Kafka perspective. When an event is processed, the Kafka server is informed (automatically or with with `.Commit(...)`) that this GroupId has processed the event. When restarting the application the Kakfa server can then inform the client from what offset to continue. If the application is restarted with a different GroupId then all events is reprocessed. 
 
