@@ -13,14 +13,49 @@ We need Docker Desktop
 I use [Strimzi Kafka](https://strimzi.io/).
 
 It consist of two containers zookeeper and kafka. 
-To start both containers use Docker Compose and a [docker-compose.yaml](src/docker-compose.yaml): 
+Create a docker-compose.yaml file:
+
+```dockerfile
+version: '2'
+
+services:
+
+  zookeeper:
+    image: quay.io/strimzi/kafka:0.37.0-kafka-3.5.1
+    command: [
+        "sh", "-c",
+        "bin/zookeeper-server-start.sh config/zookeeper.properties"
+      ]
+    ports:
+    - "2181:2181"
+    environment:
+      LOG_DIR: /tmp/logs
+
+  kafka:
+    image: quay.io/strimzi/kafka:0.37.0-kafka-3.5.1
+    command: [
+      "sh", "-c",
+      "bin/kafka-server-start.sh config/server.properties --override listeners=$${KAFKA_LISTENERS} --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} --override zookeeper.connect=$${KAFKA_ZOOKEEPER_CONNECT}"
+    ]
+    depends_on:
+    - zookeeper
+    ports:
+    - "9092:9092"
+    environment:
+      LOG_DIR: "/tmp/logs"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+```
+
+And start the two containers with:
 
 ```powershell
 cd src
 docker-compose up
 ``` 
 
-This starts both containers. Kafka is now accessible from `localhost:9092`. 
+This starts both containers. Kafka is now accessible externally from `localhost:9092`. 
 
 # Create Publisher Service
 
@@ -67,8 +102,7 @@ Create `Dockerfile` files with inspiration from [here](https://learn.microsoft.c
 * [Dockerfile](src/producer/Dockerfile) for producer.
 * [Dockerfile](src/consumer/Dockerfile) for consumer.
 
-
-Update [docker-compose.yaml](docker-compose.yaml) with reference to the two containers. Here the producer:
+Update [docker-compose.yaml](docker-compose.yaml) with reference to the two containers (and change the 'KAFKA_ADVERTISED_LISTENERS' setting). Here the producer:
 
 ```dockerfile
 producer:
