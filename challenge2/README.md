@@ -61,7 +61,35 @@ I added the consumer logic to the [worker](src/consumer/Worker.cs) class.
 
 The GroupId property is interesting from a Kafka perspective. When an event is processed, the Kafka server is informed (automatically or with with `.Commit(...)`) that this GroupId has processed the event. When restarting the application the Kakfa server can then inform the client from what offset to continue. If the application is restarted with a different GroupId then all events is reprocessed. 
 
-# Create Containers for services
+# Create Containers for services and run locally
+
+Create `Dockerfile` files with inspiration from [here](https://learn.microsoft.com/en-us/dotnet/core/extensions/cloud-service?pivots=cli):
+* [Dockerfile](src/producer/Dockerfile) for producer.
+* [Dockerfile](src/consumer/Dockerfile) for consumer.
+
+
+Update [docker-compose.yaml](docker-compose.yaml) with reference to the two containers. Here the producer:
+
+```dockerfile
+producer:
+    build: ./producer/
+    depends_on:
+    - kafka
+    environment:
+      "KafkaHost": "kafka:9092"
+```
+
+The `build` command points to a folder with a `Dockerfile` and builds the container when needed.  
+`environment` sets environment variables and the c# application check the environment variable before `appsettings.json`. 
+
+Start all 4 containers with 
+```powershell
+docker-compose up
+```
+And the consumer receives the messages send from the producer:
+![Screenshot1](doc/screenshot1.png)
+
+
 
 # Create ACR and AKS 
 
