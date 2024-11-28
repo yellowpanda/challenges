@@ -6,6 +6,9 @@ Create a service that publish events to a Kafka topic. Create another service th
 We need Docker Desktop 
 ```powershell
  winget install Docker.DockerDesktop
+ winget install -e --id Microsoft.AzureCLI
+ winget install -e --id Helm.Helm
+ winget install -e --id Kubernetes.kubectl
 ```
 
 # Run Kafka locally
@@ -123,8 +126,18 @@ docker-compose up
 And the consumer receives the messages send from the producer:
 ![Screenshot1](doc/screenshot1.png)
 
-
-
 # Create ACR and AKS 
 
+I use Bicep to describe what resources that I need ([main.bicep](iac/main.bicep)) and have two powershell scripts to create ([iac-deploy.ps1](iac/iac-deploy.ps1)) and delete all the resources ([iac-cleanup.ps1](iac/iac-cleanup.ps1)). 
+
+```powershell
+az login
+az account set --subscription "<subscription name>"
+cd iac
+./iac-deploy.ps1
+```
+
 # Deploy Kafka and Services 
+
+Use of Helm: https://helm.sh/docs/intro/quickstart/
+

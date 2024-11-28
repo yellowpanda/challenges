@@ -18,7 +18,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.27.3'
+    kubernetesVersion: '1.30.5'
     dnsPrefix: 'challenge2'
     enableRBAC: true
     agentPoolProfiles: [
