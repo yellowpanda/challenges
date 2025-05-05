@@ -9,6 +9,7 @@ We need Docker Desktop
  winget install -e --id Microsoft.AzureCLI
  winget install -e --id Helm.Helm
  winget install -e --id Kubernetes.kubectl
+ winget install --id=Derailed.k9s  -e
 ```
 
 # Run Kafka locally
@@ -65,7 +66,7 @@ This starts both containers. Kafka is now accessible externally from `localhost:
 The worker template is used to publish an event every second.
 
 ```powershell
-dotnet new solution --name challenge1
+dotnet new solution --name challenge2
 dotnet new worker --name producer
 dotnet sln add producer
 ```
@@ -137,7 +138,86 @@ cd iac
 ./iac-deploy.ps1
 ```
 
-# Deploy Kafka and Services 
+
+
+# Create the producer container 
+Create a [Dockerfile](./src/producer/Dockerfile).
+
+```powershell
+# Build image and put into the local container registry
+docker build -t challenge2-producer-image -f Dockerfile .
+
+# Create container
+docker create --name challenge2-producer challenge2-producer-image
+
+# Run it (will fail because Kafka is not running)
+docker run -it --rm challenge2-producer-image
+```
+
+# Push to producer container registry
+
+```powershell
+$registryName = "<registry name>"
+
+az login
+az acr login --name "$registryName"  --expose-token
+
+# Tag container image (create alias)
+docker tag challenge2-producer-image "$registryName.azurecr.io/challenge2/challenge2-producer-image"
+
+docker push "$registryName.azurecr.io/challenge2/challenge2-producer-image"
+```
+
+# Create and push the consumer container
+
+Just do the same as above for the consumer. 
+
+```powershell
+# Build image and put into the local container registry
+docker build -t challenge2-consumer-image -f Dockerfile .
+
+# Create container
+docker create --name challenge2-consumer challenge2-consumer-image
+
+# Run it (will fail because Kafka is not running)
+docker run -it --rm challenge2-consumer-image
+
+# Tag container image (create alias)
+docker tag challenge2-consumer-image "$registryName.azurecr.io/challenge2/challenge2-consumer-image"
+
+docker push "$registryName.azurecr.io/challenge2/challenge2-consumer-image"
+
+```
+
+
+# Create a helm chart for the application
+
+I follow this [how to](https://helm.sh/docs/chart_template_guide/getting_started/).
+
+```powershell
+helm create mychart
+```
+
+Replace `image.repository` with `challenge2acr.azurecr.io/challenge2/challenge2-producer-image`
+# Deploy the application helm chart
+
+```powershell
+helm install producer .\src\producer\producer-chart\
+helm install producer .\src\consumer\consumer-chart\
+```
+
+
+# Deploy Kafka 
 
 Use of Helm: https://helm.sh/docs/intro/quickstart/
 
+Install Kafka with Helm: https://strimzi.io/blog/2018/11/01/using-helm/. 
+
+```powershell
+helm repo add strimzi https://strimzi.io/charts/
+helm install strimzi/strimzi-kafka-operator --generate-name
+```
+
+# Configure Kafka and the Applications
+
+The applications are running. Kafka is runnnig. They cannot communicate because they are not configured. 
