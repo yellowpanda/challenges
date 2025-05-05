@@ -11,14 +11,14 @@ resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
   }
 }
 
-resource aks 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
+resource aks 'Microsoft.ContainerService/managedClusters@2024-02-01' = {
   name: 'challenge2-aks'
   location: location
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.30.5'
+    kubernetesVersion: '1.31.7'
     dnsPrefix: 'challenge2'
     enableRBAC: true
     agentPoolProfiles: [
@@ -30,11 +30,6 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
         mode: 'System'
       }
     ]
-    addonProfiles: {
-      httpApplicationRouting: {
-        enabled: true
-      }
-    }
   }
 }
 
